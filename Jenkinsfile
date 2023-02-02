@@ -4,6 +4,9 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
         timestamps()
     }
+    environment {     
+        DOCKERHUB_CREDENTIALS= credentials('Docker-Hub-Credentials')     
+  } 
     stages {
         stage('GitCheckOut') {
             steps {
@@ -16,14 +19,12 @@ pipeline {
             }
         }
         stage('DockerPush'){
-            steps { withCredentials([string(credentialsId: 'Docker-Hub-Credentials', variable: 'DOCKER-HUB-CREDENTIALS')]) {
+            steps { 
                 sh "sudo docker login -u gmk1995 -p ${DOCKER-HUB-CREDENTIALS}"
-
-        }
                 sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
-        }
-        }
 
+        }             
+        }
         stage('KubernetesDeployment') {
             steps {
                 sh "sudo kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
