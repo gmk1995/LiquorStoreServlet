@@ -20,7 +20,7 @@ pipeline {
         }
         stage('DockerPush'){
             steps { 
-                sh "sudo docker login -u gmk1995 -p ${DOCKER-HUB-CREDENTIALS}"
+                sh "echo $DOCKERHUB-CREDENTIALS | sudo  docker login -u gmk1995 --password-stdin"
                 sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
 
         }             
