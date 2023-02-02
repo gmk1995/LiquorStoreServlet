@@ -20,8 +20,9 @@ pipeline {
             }
         }
         stage('DockerLogin'){
-            steps withCredentials([string(credentialsId: 'Docker-Credentials', variable: 'DOCKER-CREDENTIALS')]) {
+            steps { withCredentials([string(credentialsId: 'Docker-Credentials', variable: 'DOCKER-CREDENTIALS')]) {
                 sh "docker login --username "gmk1995" --password "${DOCKER-CREDENTIALS}""
+        }
         }
         }
         stage('DockerPushed') {
