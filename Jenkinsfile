@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    tools {
-        maven 'maven-3.8.7'
-    }
-
     options {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
         timestamps()
@@ -20,8 +16,8 @@ pipeline {
             }
         }
         stage('DockerPush'){
-            steps { withCredentials([string(credentialsId: 'Docker-Credentials', variable: 'DOCKER-CREDENTIALS')]) {
-                sh "sudo docker login -u gmk1995 -p ${DOCKER-CREDENTIALS}"
+            steps { withCredentials([string(credentialsId: 'Docker-Hub-Credentials', variable: 'DOCKER-HUB-CREDENTIALS')]) {
+                sh "sudo docker login -u gmk1995 -p ${DOCKER-HUB-CREDENTIALS}"
 
         }
                 sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
