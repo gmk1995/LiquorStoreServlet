@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-liquorstoreservlet-deployment
+  namespace: testing-env
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: java-liquorstoreservlet
+  template:
+    metadata:
+      labels:
+        app: java-liquorstoreservlet
+    spec:
+      containers:
+      - name: java-liquorstoreservlet
+        image: gmk1995/java-liquorstoreservlet:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-liquorstoreservlet-service
+  namespace: testing-env
+spec:
+  selector:
+    app: java-liquorstoreservlet
+  ports:
+  - port: 80
+    targetPort: 8080

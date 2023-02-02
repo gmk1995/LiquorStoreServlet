@@ -1,43 +1,32 @@
 pipeline {
-    agent any 
-
+    agent any
     tools {
-        maven 'maven3.8.7'
-       }
-       
-    options {
-  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
-}
+        maven 'maven-3.8.7'
+    }
 
+    options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+        timestamps()
+    }
     stages {
         stage('GitCheckOut') {
-            steps{
+            steps {
                 git branch: 'main', credentialsId: '026f781b-368d-4626-ab66-08d71d1d7d82', url: 'https://github.com/gmk1995/LiquorStoreServlet.git'
             }
         }
-
-        stage('Maven Build') {
+        stage('DockerBuild') {
             steps {
-                sh "mvn clean package"
+                sh "docker build -t gmk1995/java-liquorstoreservlet:v1 ."
             }
         }
-
-        stage('SonarQubeReport') {
-            steps{
-                sh "mvn sonar:sonar"
+        stage('DockerPushed') {
+            steps {
+                sh "docker push gmk1995/java-liquorstoreservlet:v1"
             }
         }
-
-        stage('UploadToArtifacts') {
-            steps{
-                sh "mvn clean deploy"
-            }
-        }
-
-        stage('DeployingWarFileInTomcatServer') {
-            steps{ sshagent(['Tomcat-ssh-connection-key']) { 
-                sh "scp -o StrictHostKeyChecking=no target/LiquorStoreApp-1.0-SNAPSHOT.war ec2-user@13.233.121.198:/opt/apache-tomcat-9.0.71/webapps/LiquorStoreApp-1.0-SNAPSHOT.war"
-            }
+        stage('KubernetesDeployment') {
+            steps {
+                sh "kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
             }
         }
     }
