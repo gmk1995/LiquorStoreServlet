@@ -29,6 +29,7 @@ metadata:
   name: java-liquorstoreservlet-service
   namespace: testing-env
 spec:
+  type: NodePort
   selector:
     app: java-liquorstoreservlet
   ports:
