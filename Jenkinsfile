@@ -21,7 +21,7 @@ pipeline {
         }
         stage('DockerPush'){
             steps { withCredentials([string(credentialsId: 'Docker-Credentials', variable: 'DOCKER-CREDENTIALS')]) {
-                sh "sudo docker login --username \"gmk1995\" --password \"${DOCKER-CREDENTIALS}\""
+                sh "sudo docker login -u "gmk1995" -p ${DOCKER-CREDENTIALS}"
 
         }
                 sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
