@@ -19,18 +19,15 @@ pipeline {
                 sh "sudo docker build -t gmk1995/java-liquorstoreservlet:v1 ."
             }
         }
-        stage('DockerLogin'){
+        stage('DockerPush'){
             steps { withCredentials([string(credentialsId: 'Docker-Credentials', variable: 'DOCKER-CREDENTIALS')]) {
                 sh "sudo docker login --username \"gmk1995\" --password \"${DOCKER-CREDENTIALS}\""
 
         }
-        }
-        }
-        stage('DockerPushed') {
-            steps {
                 sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
-            }
         }
+        }
+
         stage('KubernetesDeployment') {
             steps {
                 sh "sudo kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
