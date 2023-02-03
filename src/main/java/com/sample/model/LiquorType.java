@@ -1,7 +1,7 @@
 package com.sample.model;
 
 /**
- * Created by kasun on 5/24/17.
+ * Created by Mohan on 03-02-2023.
  */
 public enum LiquorType {
     WINE,BEER,WHISKY
