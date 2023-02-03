@@ -27,8 +27,14 @@ pipeline {
         }
         stage('KubernetesDeployment') {
             steps {
-                sh "sudo kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
+                sh "kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
             }
+        }
+    }
+
+    post {
+        always {
+            sh "docker logout"
         }
     }
 }
