@@ -22,59 +22,11 @@ This repository contains code for a Java Servlet application that runs in a Tomc
 
 The Dockerfile builds two Docker images, one for building the Java Servlet application using Maven and another for running the application in a Tomcat container.
 
-Copy code
-FROM maven as build
-WORKDIR /opt/apps
-COPY . /opt/apps
-RUN mvn clean package
-CMD [ "mvn" ]
+### Kubernetes Manifest
 
-FROM tomcat
-COPY --from=build /opt/apps/target/LiquorStoreApp-1.0-SNAPSHOT.war /usr/local/tomcat/webapps
-Kubernetes Manifest
 The Kubernetes manifest LiquorServlet-Java-Web-App-Deployment.yaml defines a deployment and a service for the Java Servlet application. The deployment creates two replicas of the application and the service exposes the application on port 80.
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: java-liquorstoreservlet-deployment
-  namespace: testing-env
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: java-liquorstoreservlet
-  template:
-    metadata:
-      labels:
-        app: java-liquorstoreservlet
-    spec:
-      containers:
-      - name: java-liquorstoreservlet
-        image: gmk1995/java-liquorstoreservlet:v1
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 8080
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: java-liquorstoreservlet-service
-  namespace: testing-env
-spec:
-  type: NodePort
-  selector:
-    app: java-liquorstoreservlet
-  ports:
-
-- port: 80
-    targetPort: 8080
-
-### Jenkinsfile
+#### Jenkinsfile
 
 The Jenkinsfile describes a Jenkins pipeline for building, pushing and deploying the Java Servlet application. The pipeline consists of four stages:
 
@@ -82,44 +34,3 @@ Git checkout: Check out the source code from the repository on GitHub.
 Docker build: Build a Docker image of the Java Servlet application.
 Docker push: Push the Docker image to Docker Hub.
 Kubernetes deployment: Apply the Kubernetes deployment configuration to create a deployment and a service for the application.
-
-pipeline {
-    agent any
-    options {
-        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
-        timestamps()
-    }
-    environment {
-        DOCKERHUB_CREDENTIALS= credentials('Docker-Hub-Credentials')
-  }
-    stages {
-        stage('GitCheckOut') {
-            steps {
-                git branch: 'main', credentialsId: '026f781b-368d-4626-ab66-08d71d1d7d82', url: 'https://github.com/gmk1995/LiquorStoreServlet.git'
-            }
-        }
-        stage('DockerBuild') {
-            steps {
-                sh "sudo docker build -t gmk1995/java-liquorstoreservlet:v1 ."
-            }
-        }
-        stage('DockerPush'){
-            steps {
-                sh "echo $DOCKERHUB_CREDENTIALS | sudo  docker login -u gmk1995 --password-stdin"
-                sh "sudo docker push gmk1995/java-liquorstoreservlet:v1"
-
-        }             
-        }
-        stage('KubernetesDeployment') {
-            steps {
-                sh "kubectl apply -f LiquorServlet-Java-Web-App-Deployment.yaml"
-            }
-        }
-    }
-
-    post {
-        always {
-            sh "docker logout"
-        }
-    }
-}
