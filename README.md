@@ -34,8 +34,6 @@ COPY --from=build /opt/apps/target/LiquorStoreApp-1.0-SNAPSHOT.war /usr/local/to
 Kubernetes Manifest
 The Kubernetes manifest LiquorServlet-Java-Web-App-Deployment.yaml defines a deployment and a service for the Java Servlet application. The deployment creates two replicas of the application and the service exposes the application on port 80.
 
-Copy code
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -84,8 +82,6 @@ Git checkout: Check out the source code from the repository on GitHub.
 Docker build: Build a Docker image of the Java Servlet application.
 Docker push: Push the Docker image to Docker Hub.
 Kubernetes deployment: Apply the Kubernetes deployment configuration to create a deployment and a service for the application.
-
-Copy code
 
 pipeline {
     agent any
