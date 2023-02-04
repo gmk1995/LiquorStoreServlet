@@ -30,7 +30,7 @@ The Kubernetes manifest LiquorServlet-Java-Web-App-Deployment.yaml defines a dep
 
 The Jenkinsfile describes a Jenkins pipeline for building, pushing and deploying the Java Servlet application. The pipeline consists of four stages:
 
-Git checkout: Check out the source code from the repository on GitHub.
-Docker build: Build a Docker image of the Java Servlet application.
-Docker push: Push the Docker image to Docker Hub.
-Kubernetes deployment: Apply the Kubernetes deployment configuration to create a deployment and a service for the application.
+1. Git checkout: Check out the source code from the repository on GitHub.
+2. Docker build: Build a Docker image of the Java Servlet application.
+3. Docker push: Push the Docker image to Docker Hub.
+4. Kubernetes deployment: Apply the Kubernetes deployment configuration to create a deployment and a service for the application.
